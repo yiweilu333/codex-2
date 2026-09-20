@@ -12,13 +12,16 @@ import type { WorkoutRepository } from './WorkoutRepository';
 
 const cloneWorkout = (workout: Workout): Workout =>
   structuredClone(workout);
+let memoryId = 0;
+const createMemoryId = () =>
+  randomUUID() || `00000000-0000-4000-8000-${String(++memoryId).padStart(12, '0')}`;
 
 export class InMemoryWorkoutRepository implements WorkoutRepository {
   private readonly workouts = new Map<string, Workout>();
 
   async start(title: string, startedAt: string): Promise<Workout> {
     const workout: Workout = {
-      id: randomUUID(),
+      id: createMemoryId(),
       title,
       status: 'in_progress',
       startedAt,
@@ -67,7 +70,7 @@ export class InMemoryWorkoutRepository implements WorkoutRepository {
   async addExercise(workoutId: string, exercise: Exercise): Promise<WorkoutExercise> {
     const workout = this.requireWorkout(workoutId);
     const workoutExercise: WorkoutExercise = {
-      id: randomUUID(),
+      id: createMemoryId(),
       workoutId,
       exerciseId: exercise.id,
       exerciseNameSnapshot: exercise.name,
@@ -99,7 +102,7 @@ export class InMemoryWorkoutRepository implements WorkoutRepository {
       (set) => set.id === input.id || set.setIndex === input.setIndex,
     );
     const workoutSet: WorkoutSet = {
-      id: existing?.id ?? input.id ?? randomUUID(),
+      id: existing?.id ?? input.id ?? createMemoryId(),
       workoutExerciseId: input.workoutExerciseId,
       setIndex: input.setIndex,
       setType: input.setType ?? existing?.setType ?? 'working',

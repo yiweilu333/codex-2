@@ -4,6 +4,9 @@ import type { Exercise, NewExercise, UpdateExercise } from '../domain/exercise';
 import type { ExerciseFilter, ExerciseRepository } from './ExerciseRepository';
 
 const cloneExercise = (exercise: Exercise): Exercise => ({ ...exercise });
+let memoryId = 0;
+const createMemoryId = () =>
+  randomUUID() || `00000000-0000-4000-8000-${String(++memoryId).padStart(12, '0')}`;
 
 export class InMemoryExerciseRepository implements ExerciseRepository {
   private readonly exercises = new Map<string, Exercise>();
@@ -31,7 +34,7 @@ export class InMemoryExerciseRepository implements ExerciseRepository {
     const now = new Date().toISOString();
     const exercise: Exercise = {
       ...input,
-      id: randomUUID(),
+      id: createMemoryId(),
       isCustom: true,
       createdAt: now,
       updatedAt: now,
