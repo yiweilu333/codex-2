@@ -1,2 +1,35 @@
 .superpowers/
 .worktrees/
+
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+/ios
+/android
+
+# Metro and debug output
+.metro-health-check*
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# local and generated files
+.DS_Store
+.vscode/
+*.pem
+.env*.local
+*.tsbuildinfo
