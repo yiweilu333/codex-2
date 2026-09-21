@@ -28,3 +28,25 @@ it('copies the previous weight, clears reps, and focuses reps when adding a set'
   expect(reps[1]).toHaveProp('value', '');
   expect(reps[1]).toHaveProp('autoFocus', true);
 });
+
+it('flushes a pending edit before marking the set completed', async () => {
+  const repository = new InMemoryWorkoutRepository();
+  const service = new WorkoutService(repository, { now: () => fixedNow }, {
+    create: () => '30000000-0000-4000-8000-000000000001',
+  });
+  const workout = await service.start('胸部训练');
+  const [exercise] = await service.addExercises(workout.id, [barbellBench]);
+  await service.saveDraftSet(exercise.id, { setIndex: 1, weightKg: 80, reps: 8 });
+  const store = createActiveWorkoutStore(service);
+  await store.getState().load();
+
+  await render(<ActiveWorkoutScreen service={service} store={store} />);
+  await fireEvent.changeText(screen.getByLabelText('次数'), '9');
+  await fireEvent.press(screen.getByLabelText('完成第1组'));
+  await new Promise((resolve) => setTimeout(resolve, 350));
+
+  expect((await service.resume())?.workoutExercises[0].sets[0]).toMatchObject({
+    reps: 9,
+    isCompleted: true,
+  });
+});

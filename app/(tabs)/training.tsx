@@ -1,11 +1,17 @@
-import { View } from 'react-native';
+import { router, usePathname } from 'expo-router';
 
-import { AppText } from '@/src/shared/components/AppText';
+import { useWorkoutRuntime } from '@/src/features/workouts/application/WorkoutRuntimeContext';
+import { WorkoutHistoryScreen } from '@/src/features/history/screens/WorkoutHistoryScreen';
 
 export default function TrainingRoute() {
+  const { repository } = useWorkoutRuntime();
+  const pathname = usePathname();
   return (
-    <View>
-      <AppText>训练</AppText>
-    </View>
+    <WorkoutHistoryScreen
+      repository={repository}
+      refreshKey={pathname}
+      onSelect={(id) => router.push(`/workout/${id}`)}
+      onOpenExercises={() => router.push('/exercises')}
+    />
   );
 }

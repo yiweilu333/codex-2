@@ -1,25 +1,18 @@
-import { StyleSheet, View } from 'react-native';
+import { router, usePathname } from 'expo-router';
 
-import { AppText } from '@/src/shared/components/AppText';
+import { useWorkoutRuntime } from '@/src/features/workouts/application/WorkoutRuntimeContext';
+import { DashboardScreen } from '@/src/features/dashboard/screens/DashboardScreen';
 
 export default function DashboardRoute() {
+  const { repository } = useWorkoutRuntime();
+  const pathname = usePathname();
   return (
-    <View style={styles.container}>
-      <AppText style={styles.title}>Forge Fit</AppText>
-      <AppText>开始记录你的下一次训练。</AppText>
-    </View>
+    <DashboardScreen
+      repository={repository}
+      refreshKey={pathname}
+      onStart={() => router.push('/workout/start')}
+      onResume={() => router.push('/workout/active')}
+      onOpenHistory={() => router.push('/training')}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-    padding: 24,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-});

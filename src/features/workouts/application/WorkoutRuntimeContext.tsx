@@ -2,10 +2,12 @@ import { createContext, useContext, type PropsWithChildren } from 'react';
 import type { StoreApi } from 'zustand/vanilla';
 
 import type { ActiveWorkoutState } from '@/src/stores/activeWorkoutStore';
+import type { WorkoutRepository } from '../data/WorkoutRepository';
 import type { WorkoutService } from './WorkoutService';
 
 export interface WorkoutRuntime {
   service: WorkoutService;
+  repository: WorkoutRepository;
   store: StoreApi<ActiveWorkoutState>;
 }
 

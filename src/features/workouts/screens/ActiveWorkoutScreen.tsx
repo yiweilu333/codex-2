@@ -29,7 +29,7 @@ const elapsedLabel = (startedAt: string, now: number) => {
 
 export function ActiveWorkoutScreen({ service, store, onAddExercise, onFinish, onBack }: ActiveWorkoutScreenProps) {
   const state = useStore(store);
-  const [now, setNow] = useState(Date.now());
+  const [now, setNow] = useState<number | null>(null);
   const [focused, setFocused] = useState<string>();
 
   useEffect(() => {
@@ -62,6 +62,7 @@ export function ActiveWorkoutScreen({ service, store, onAddExercise, onFinish, o
   const completeSet = async (set: WorkoutSet) => {
     if (set.isCompleted) return;
     try {
+      await store.getState().flushPending();
       await service.completeSet(set.workoutExerciseId, {
         setIndex: set.setIndex,
         weightKg: set.weightKg ?? undefined,
@@ -90,7 +91,7 @@ export function ActiveWorkoutScreen({ service, store, onAddExercise, onFinish, o
         <Pressable accessibilityRole="button" onPress={onBack}><AppText tone="primary">返回</AppText></Pressable>
         <View style={styles.headerCopy}>
           <AppText weight="bold" style={styles.title}>{workout.title}</AppText>
-          <AppText tone="muted">{elapsedLabel(workout.startedAt, now)}</AppText>
+          <AppText tone="muted">{now == null ? '--:--' : elapsedLabel(workout.startedAt, now)}</AppText>
         </View>
         <Pressable accessibilityRole="button" onPress={onAddExercise}><AppText tone="primary">加动作</AppText></Pressable>
       </View>
@@ -102,7 +103,14 @@ export function ActiveWorkoutScreen({ service, store, onAddExercise, onFinish, o
           onChange={changeSet}
           onComplete={(set) => void completeSet(set)}
           onRemove={(set) => {
-            void service.removeSet(set.id).then(() => store.getState().load());
+            void (async () => {
+              await store.getState().flushPending();
+              const persisted = store.getState().workout?.workoutExercises
+                .find((item) => item.id === set.workoutExerciseId)?.sets
+                .find((item) => item.setIndex === set.setIndex);
+              if (persisted) await service.removeSet(persisted.id);
+              await store.getState().load();
+            })();
           }}
           onAddSet={() => {
             const previous = exercise.sets.at(-1);

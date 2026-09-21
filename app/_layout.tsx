@@ -5,6 +5,8 @@ import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 import 'react-native-reanimated';
 
+import { AppBootstrap } from '@/src/bootstrap/AppBootstrap';
+
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -38,7 +40,7 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return <AppBootstrap><RootLayoutNav /></AppBootstrap>;
 }
 
 function RootLayoutNav() {
@@ -48,6 +50,12 @@ function RootLayoutNav() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="workout/start" options={{ headerShown: false }} />
+        <Stack.Screen name="workout/active" options={{ headerShown: false, gestureEnabled: false }} />
+        <Stack.Screen name="workout/[id]" options={{ title: '训练详情' }} />
+        <Stack.Screen name="exercises/index" options={{ title: '动作库' }} />
+        <Stack.Screen name="exercises/create" options={{ title: '新建动作' }} />
+        <Stack.Screen name="exercises/[id]" options={{ title: '动作详情' }} />
       </Stack>
     </ThemeProvider>
   );

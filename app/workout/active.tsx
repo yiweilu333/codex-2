@@ -9,8 +9,11 @@ export default function ActiveWorkoutRoute() {
     <ActiveWorkoutScreen
       {...runtime}
       onBack={() => router.back()}
-      onAddExercise={() => router.push('/exercises')}
-      onFinish={() => router.replace('/history')}
+      onAddExercise={() => {
+        const workoutId = runtime.store.getState().workout?.id;
+        if (workoutId) router.push({ pathname: '/exercises', params: { mode: 'pick', workoutId } });
+      }}
+      onFinish={() => router.replace('/training')}
     />
   );
 }
