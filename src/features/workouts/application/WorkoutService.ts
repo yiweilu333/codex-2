@@ -83,4 +83,8 @@ export class WorkoutService {
   async discard(workoutId: string): Promise<void> {
     await this.workouts.discard(workoutId, this.clock.now());
   }
+
+  async removeSet(setId: string): Promise<void> {
+    await this.workouts.removeSet(setId);
+  }
 }

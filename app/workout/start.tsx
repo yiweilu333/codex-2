@@ -1,11 +1,17 @@
-import { View } from 'react-native';
+import { router } from 'expo-router';
 
-import { AppText } from '@/src/shared/components/AppText';
+import { useExerciseService } from '@/src/features/exercises/application/ExerciseServiceContext';
+import { useWorkoutRuntime } from '@/src/features/workouts/application/WorkoutRuntimeContext';
+import { StartWorkoutScreen } from '@/src/features/workouts/screens/StartWorkoutScreen';
 
 export default function StartWorkoutRoute() {
+  const exerciseService = useExerciseService();
+  const { service } = useWorkoutRuntime();
   return (
-    <View>
-      <AppText>开始训练</AppText>
-    </View>
+    <StartWorkoutScreen
+      exerciseService={exerciseService}
+      workoutService={service}
+      onStarted={() => router.replace('/workout/active')}
+    />
   );
 }
